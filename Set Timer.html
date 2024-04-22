@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Gym Set Timer</title>
+<style>
+    body, html {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        height: 100%; /* Full height */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .timer-container {
+        background: white;
+        padding: 20px;
+        text-align: center;
+        border-radius: 10px;
+        width: 95%;
+        max-width: 360px; /* Maximum width to maintain usability */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    select, button {
+        padding: 12px 20px; /* Larger padding for easier interaction */
+        margin-top: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        cursor: pointer;
+        font-size: 18px; /* Larger font size for better readability */
+        width: 100%; /* Full width for easier access */
+        box-sizing: border-box;
+    }
+    button:hover {
+        background-color: #e0e0e0;
+    }
+    .label {
+        font-size: 20px; /* Increased font size for visibility */
+        margin-top: 20px;
+    }
+    .adjust-button {
+        font-size: 20px; /* Larger font size for easier pressing */
+        padding: 10px 15px; /* Larger area to tap */
+        width: auto;
+    }
+    #timeRemaining {
+        font-size: 26px; /* Larger display for time */
+        color: #333;
+        margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+<div class="timer-container">
+    <h1>Gym Set Timer</h1>
+
+    <label class="label" for="minutes">Minutes:</label>
+    <select id="minutes">
+        <script>
+            for (let i = 1; i <= 10; i++) {
+                document.write(`<option value="${i}">${i}</option>`);
+            }
+        </script>
+    </select>
+
+    <label class="label" for="seconds">Seconds:</label>
+    <select id="seconds">
+        <option value="0">0</option>
+        <option value="15">15</option>
+        <option value="30">30</option>
+        <option value="45">45</option>
+    </select>
+
+    <div class="label">
+        <button id="startButton">Start Timer</button>
+        <button id="completeSetButton">Complete Set</button>
+        <button id="resetButton">Reset</button>
+    </div>
+
+    <div class="label">
+        <button class="adjust-button" id="decreaseSet">-</button>
+        Sets Completed: <span id="setsCompleted">0</span>
+        <button class="adjust-button" id="increaseSet">+</button>
+    </div>
+
+    <p>Time Remaining: <span id="timeRemaining">00:00</span></p>
+</div>
+
+<script>
+    let timer = null;
+    let totalSeconds = 0;
+    let setsCount = 0;
+
+    document.getElementById("startButton").addEventListener("click", function() {
+        setTimer();
+    });
+
+    document.getElementById("completeSetButton").addEventListener("click", function() {
+        setsCount++;
+        document.getElementById("setsCompleted").innerText = setsCount;
+        setTimer();
+    });
+
+    document.getElementById("resetButton").addEventListener("click", function() {
+        stopTimer();
+        totalSeconds = 0;
+        updateDisplay();
+    });
+
+    document.getElementById("increaseSet").addEventListener("click", function() {
+        setsCount++;
+        document.getElementById("setsCompleted").innerText = setsCount;
+    });
+
+    document.getElementById("decreaseSet").addEventListener("click", function() {
+        if (setsCount > 0) setsCount--;
+        document.getElementById("setsCompleted").innerText = setsCount;
+    });
+
+    function setTimer() {
+        const minutes = parseInt(document.getElementById("minutes").value);
+        const seconds = parseInt(document.getElementById("seconds").value);
+        totalSeconds = minutes * 60 + seconds;
+        startTimer();
+    }
+
+    function startTimer() {
+        stopTimer();
+        timer = setInterval(function() {
+            if (totalSeconds > 0) {
+                totalSeconds--;
+                updateDisplay();
+            } else {
+                stopTimer();
+            }
+        }, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(timer);
+    }
+
+    function updateDisplay() {
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        document.getElementById("timeRemaining").innerText = `${padTime(minutes)}:${padTime(seconds)}`;
+    }
+
+    function padTime(num) {
+        return num.toString().padStart(2, '0');
+    }
+</script>
+</body>
+</html>
